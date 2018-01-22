@@ -1,8 +1,8 @@
 source,target,value
-Barry,Elvis,2
-Frodo,Elvis,2
-Frodo,Sarah,2
-Barry,Alice,2
-Elvis,Sarah,2
-Elvis,Alice,2
-Sarah,Alice,4
+MAT095,MAT096,20
+MAT096,MAT115,15
+MAT099,MAT115,20
+MAT119,MAT115,3
+MAT115,MAT200,20
+MAT117,MAT200,10
+MAT120,MAT115,15
