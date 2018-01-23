@@ -28,8 +28,8 @@
 <body>
 <p id="chart">
 
-<script src="https://d3js.org/d3.v3.min.js"></script>
-<script src="https://ghenshaw.github.io/sankey.js"></script>
+<script src="d3.v3.min.js"></script>
+<script src="sankey.js"></script>
 <script>
 	
 var units = "Students";
@@ -59,7 +59,7 @@ var sankey = d3.sankey()
 var path = sankey.link();
 
 // load the data (using the timelyportfolio csv method)
-d3.csv("https://ghenshaw.github.io/sankey.csv", function(error, data) {
+d3.csv("sankey2.csv", function(error, data) {
 
   //set up graph in same style as original example but empty
   graph = {"nodes" : [], "links" : []};

@@ -1,0 +1,9 @@
+source,target,value
+MAT096,MAT096(repeat), 242
+MAT096(repeat),MAT096(2nd repeat), 89
+MAT096,MAT120,81
+MAT096,MAT115,78
+MAT095(repeat),MAT096,71
+MAT096(repeat),MAT120,51
+MAT095(repeat),MAT095(2nd repeat),50
+MAT120,MAT120(repeat),39
