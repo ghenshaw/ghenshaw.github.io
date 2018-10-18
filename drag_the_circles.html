@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.active {
+  stroke: #000;
+  stroke-width: 4px;
+}
+h1 {
+  color: Black;
+  opacity: .7;
+  font-family: "Impact";
+  text-align: center;
+}
+
+</style>
+<h1>Drag the circles</h1>
+<div class="R"><h1></h1></div>
+<svg width="960" height="500"></svg>
+<script src="d3.v4.js"></script>
+<script>
+
+function pearsonCorrelation(prefs, p1, p2) {
+  var si = [];
+
+  for (var key in prefs[p1]) {
+    if (prefs[p2][key]) si.push(key);
+  }
+  var n = si.length;
+
+  if (n == 0) return 0;
+  var sum1 = 0;
+
+  for (var i = 0; i < si.length; i++) sum1 += prefs[p1][si[i]];
+  var sum2 = 0;
+  
+  for (var i = 0; i < si.length; i++) sum2 += prefs[p2][si[i]];
+  var sum1Sq = 0;
+  
+  for (var i = 0; i < si.length; i++) {
+    sum1Sq += Math.pow(prefs[p1][si[i]], 2);
+  }
+  var sum2Sq = 0;
+  for (var i = 0; i < si.length; i++) {
+    sum2Sq += Math.pow(prefs[p2][si[i]], 2);
+  }
+  var pSum = 0;
+  for (var i = 0; i < si.length; i++) {
+    pSum += prefs[p1][si[i]] * prefs[p2][si[i]];
+  }
+  var num = pSum - (sum1 * sum2 / n);
+  var den = Math.sqrt((sum1Sq - Math.pow(sum1, 2) / n) *
+      (sum2Sq - Math.pow(sum2, 2) / n));
+  if (den == 0) return 0;
+  return num / den;
+}
+
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height"),
+    radius = 20;
+
+var circles = d3.range(20).map(function() {
+  return {
+    x: Math.round(Math.random() * (width - radius * 2) + radius),
+    y: Math.round(Math.random() * (height - radius * 2) + radius)
+  };
+});
+
+
+
+var color = d3.scaleOrdinal()
+    .range(d3.schemeCategory20);
+
+svg.selectAll("circle")
+  .data(circles)
+  .enter().append("circle")
+    .attr("cx", function(d) { return d.x; })
+    .attr("cy", function(d) { return d.y; })
+    .attr("r", radius)
+    .style("fill", function(d, i) { return color(i); })
+    .attr("opacity",.7)
+    .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+//x = []
+//y = []
+//for (var i=0;i<20;i++){
+//    x.push(Object.values(circles)[i]['x'])
+//    y.push(Object.values(circles)[i]['y'])
+//}
+//var corr = -pearsonCorrelation([x,y],0,1);
+
+function strip(number) {
+    return (parseFloat(number).toPrecision(4));
+}
+
+
+function calc_R(){
+        x = []
+        y = []
+        d3.selectAll("circle").each(function(d,i) {
+        x.push(Number(d3.select(this).attr("cx")));
+      })
+
+        d3.selectAll("circle").each(function(d,i) {
+        y.push(Number(d3.select(this).attr("cy")));
+      })
+  
+        var corr =  -pearsonCorrelation([x,y],0,1);
+        d3.select("div.R")
+          .select("h1")
+          .text("R = "+strip(corr))
+          .style("opacity",.7);
+        }
+
+calc_R();
+
+
+function dragstarted(d) {
+  d3.select(this).raise().classed("active", true);
+}
+
+function dragged(d) {
+  d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+  
+  
+}
+
+function dragended(d) {
+  d3.select(this).classed("active", false);
+  calc_R();
+}
+
+</script>
