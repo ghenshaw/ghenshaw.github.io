@@ -14,11 +14,36 @@ h1 {
 }
 
 </style>
-<h1>Drag the circles</h1>
+<h1>Change the correlation</h1>
 <div class="R"><h1></h1></div>
 <svg width="960" height="500"></svg>
 <script src="d3.v4.js"></script>
 <script>
+
+
+function standardDeviation(values){
+  var avg = average(values);
+  
+  var squareDiffs = values.map(function(value){
+    var diff = value - avg;
+    var sqrDiff = diff * diff;
+    return sqrDiff;
+  });
+  
+  var avgSquareDiff = average(squareDiffs);
+
+  var stdDev = Math.sqrt(avgSquareDiff);
+  return stdDev;
+}
+
+function average(data){
+  var sum = data.reduce(function(sum, value){
+    return sum + value;
+  }, 0);
+
+  var avg = sum / data.length;
+  return avg;
+} 
 
 function pearsonCorrelation(prefs, p1, p2) {
   var si = [];
@@ -99,24 +124,65 @@ function strip(number) {
 
 
 function calc_R(){
-        x = []
-        y = []
-        d3.selectAll("circle").each(function(d,i) {
-        x.push(Number(d3.select(this).attr("cx")));
-      })
+  x = []
+  y = []
+  d3.selectAll("circle").each(function(d,i) {
+    x.push(Number(d3.select(this).attr("cx")));
+  })
 
-        d3.selectAll("circle").each(function(d,i) {
-        y.push(Number(d3.select(this).attr("cy")));
-      })
+  d3.selectAll("circle").each(function(d,i) {
+    y.push(height - Number(d3.select(this).attr("cy")));
+  })
   
-        var corr =  -pearsonCorrelation([x,y],0,1);
-        d3.select("div.R")
-          .select("h1")
-          .text("R = "+strip(corr))
-          .style("opacity",.7);
-        }
+  var corr =  -pearsonCorrelation([x,y],0,1);
+  d3.select("div.R")
+    .select("h1")
+    .text("R = "+ -strip(corr))
+    .style("opacity",.7);
+  return [corr,x,y];
+}
 
-calc_R();
+R = calc_R();
+
+function compute_best_fit(){
+
+  x = []
+  y = []
+  r = calc_R()[0];
+  d3.selectAll("circle").each(function(d,i) {
+    x.push(Number(d3.select(this).attr("cx")));
+  })
+
+  d3.selectAll("circle").each(function(d,i) {
+    y.push(height - Number(d3.select(this).attr("cy")));
+  })
+
+  var s_x = standardDeviation(x);
+  var s_y = standardDeviation(y);
+
+  var  slope = r*(-s_y/s_x);
+  var intercept = (average(y) - slope*average(x));
+
+  return [slope, intercept];
+
+
+
+}
+
+function draw_best_fit(slope,intercept){
+    svg.append("line")
+      .attr("x1",0)
+      .attr("y1",height - intercept)
+      .attr("x2",width)
+      .attr("y2",height - (slope*width + intercept))
+      .attr("stroke","Black")
+      .attr("stroke-width","5")
+      .attr("stroke-dasharray","4 1")
+      .attr("opacity",".5");
+}
+
+best_fit_line = compute_best_fit();
+draw_best_fit(best_fit_line[0], best_fit_line[1]);
 
 
 function dragstarted(d) {
@@ -126,12 +192,14 @@ function dragstarted(d) {
 function dragged(d) {
   d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
   
-  
 }
 
 function dragended(d) {
   d3.select(this).classed("active", false);
-  calc_R();
+  R = calc_R();
+  best_fit_line = compute_best_fit();
+  svg.select("line").remove();
+  draw_best_fit(best_fit_line[0], best_fit_line[1]);
 }
 
 </script>
