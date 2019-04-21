@@ -3,13 +3,22 @@
 <html lang="en">
     <head>
     	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
     	<title>4-21 practice</title>
-    	<link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     	<script type="text/javascript" src="d3/d3.js"></script>
     </head>
 
     <body>
-        <h1>April Fools Day Reddit Posts and comments 2019</h1>
+        <h3>April Fools Day Reddit Posts and Comments 2019</h3>
+
+
+            <p> a <span style="color: blue">Blue bubble</span> is a comment to April Fool's posts.</p>
+            <p> a <span style="color: red">Red bubble</span> is an April Fool's posts in r/dataisbeautiful.</p>
+            <p> The <strong>area</strong> of a buble is proportional to its "score", i.e upvotes - downvotes</p>
+    
+        
 
         <div id="chart-area"></div>
 
@@ -17,17 +26,27 @@
       
         <div id="outer" style="width:72%">
         <div class="slidecontainer" id="inner" style="width: 800px; height: 100px;">
-        <input type="range" min="1" max="12883" value="1" class="slider" id="myRange">
+        <input type="range" min="-29" max="1600" value="0" class="slider" id="myRange">
         <div class="sliderticks">
-        <p>first</p>
-        <p></p>
-        <p></p>
-        <p></p>
-        <p></p>
-        <p>Last</p>
+        <p>12am 4-1</p>
+        <p>2am</p>
+        <p>4am</p>
+        <p>6am</p>
+        <p>8am</p>
+        <p>10am</p>
+        <p>12pm</p>
+        <p>2pm</p>
+        <p>4pm</p>
+        <p>6pm</p>
+        <p>8pm</p>
+        <p>10pm</p>
+        <p>12am 4-2</p>
+        <p>2am</p>
         </div>
         </div>
         </div>
+
+        <p><strong>Data source:</strong> The data I used was obtained by <a href="https://github.com/charlesjlee/data-viz/tree/master/altair/20190407%20-%20Reddit%2C%20April%20Fool's">charlesjlee</a> using a python api wrapper called PRAW.
 
         <script type="text/javascript" src="script.js"></script>
 

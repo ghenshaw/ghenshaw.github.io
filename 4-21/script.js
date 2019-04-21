@@ -3,10 +3,12 @@ var margin = {top: 20, right: 50, bottom: 100, left: 100};
 var width = 960 - margin.left - margin.right;
 var height = 500 - margin.top -margin.bottom;
 
-
+var dat;
 
 var slider = document.getElementById("myRange");
 var slider_value = 0;
+
+var t = d3.transition(5000);
 
 slider.oninput = function() {
   slider_value = this.value;
@@ -27,16 +29,16 @@ var ylabel = g.append("text")
      .attr("text-anchor","middle")
      .attr("x","-50")
      .attr("y",height/2)
-     .text("User Comment karma (Log)");
+     .text("User Comment karma (Log 10)");
 
 
 
 var xlabel = g.append("text")
      .attr("class","x-label")
-     .attr("text-anchor","left")
+     .attr("text-anchor","middle")
      .attr("x",width/2)
      .attr("y",height + 50)
-     .text("User Post karma (Log)");
+     .text("User Post karma (Log 10)");
 
 
 
@@ -48,7 +50,10 @@ d3.csv("data_reversed.csv").then(function(data){
 		data.post_karma = +data.post_karma;
 		data.comment_karma = +data.comment_karma;
 		data.score = +data.score;
-	})
+		data.time = +data.time;
+	});
+
+	dat=data;
 
 
 	var max_post_karma = d3.max(data,function(d){
@@ -69,21 +74,22 @@ d3.csv("data_reversed.csv").then(function(data){
 	           .range([height,0]);
 
 
-    var leftaxis = d3.axisLeft(yscale);
-    var bottomaxis = d3.axisBottom(xscale);
+    var leftaxis = d3.axisLeft(yscale).ticks(5);
+    var bottomaxis = d3.axisBottom(xscale).ticks(5);
 
     g.append("g")
-     .call(leftaxis);
+     .call(leftaxis.tickFormat(d3.format(".2s")));
 
     g.append("g")
      .attr("transform","translate(0,"+height+")")
      .attr("fill","white")
-     .call(bottomaxis);
+     .call(bottomaxis.tickFormat(d3.format(".2s")));
+
 
 	
      d3.interval(function(){
      	update(data,xscale,yscale);
-     },100);
+     },10);
 
      update(data,xscale,yscale);
 	
@@ -94,7 +100,13 @@ d3.csv("data_reversed.csv").then(function(data){
 
 function update(data,xscale,yscale){
 
-	data2 = data.slice(1,slider_value);
+
+    var data2 = data.filter(function(d){return d["time"] <= Number(slider_value)});
+  
+       
+
+
+	//const newArr = .filter(data => data.ImageName = event.target.value);
 
 	circles = g.selectAll("circle")
 	 .data(data2);
